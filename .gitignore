@@ -2,6 +2,11 @@ node_modules/
 node_modules
 out/
 dist/
+# Nexus Agents (Tauri) build outputs — never commit
+src-tauri/target/
+dist-sidecar/
+dist-web/
+NEXUS-SESSION.md
 .DS_Store
 *.log
 .vite/

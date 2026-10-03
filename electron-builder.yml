@@ -1,5 +1,5 @@
-appId: in.munderdiffl.app
-productName: Munder Difflin
+appId: com.nexus.agents
+productName: Nexus Agents
 copyright: Copyright © 2026 Chaitanya Giri
 
 # Where electron-updater looks for new versions (latest*.yml + assets on GitHub
@@ -38,7 +38,7 @@ afterSign: build/notarize.cjs
 # Register the munderdifflin:// URL scheme (shareable-hires deep link) in the
 # packaged app: CFBundleURLTypes on macOS, registry entries via NSIS on Windows.
 protocols:
-  - name: Munder Difflin
+  - name: Nexus Agents
     schemes:
       - munderdifflin
 
@@ -130,10 +130,10 @@ mac:
       arch: [universal]
     - target: zip
       arch: [universal]
-  artifactName: Munder-Difflin-${version}-mac-${arch}.${ext}
+  artifactName: Nexus-Agents-${version}-mac-${arch}.${ext}
 
 dmg:
-  title: Munder Difflin ${version}
+  title: Nexus Agents ${version}
 
 # ---- Windows ----
 win:
@@ -148,11 +148,11 @@ nsis:
   oneClick: false
   perMachine: false
   allowToChangeInstallationDirectory: true
-  artifactName: Munder-Difflin-${version}-win-x64-setup.exe
-  shortcutName: Munder Difflin
+  artifactName: Nexus-Agents-${version}-win-x64-setup.exe
+  shortcutName: Nexus Agents
 
 portable:
-  artifactName: Munder-Difflin-${version}-win-x64-portable.exe
+  artifactName: Nexus-Agents-${version}-win-x64-portable.exe
 
 # ---- Linux ----
 linux:
@@ -161,4 +161,4 @@ linux:
   target:
     - target: AppImage
       arch: [x64]
-  artifactName: Munder-Difflin-${version}-linux-x86_64.AppImage
+  artifactName: Nexus-Agents-${version}-linux-x86_64.AppImage

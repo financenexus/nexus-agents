@@ -2,7 +2,7 @@
 
 <img src="./docs/logo.png" alt="Munder Difflin, the agent harness to run an office of your clones" width="180">
 
-# Munder Difflin
+# Nexus Agents
 
 ### Agent harness to run an office of your clones
 

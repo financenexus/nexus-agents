@@ -21,7 +21,7 @@ esbuild.buildSync({
   target: 'node20',
   outfile: path.join(ROOT, 'dist-sidecar', 'sidecar.cjs'),
   alias: { electron: path.join(HERE, 'electron-shim.ts') },
-  external: ['node-pty', 'better-sqlite3', 'ws'],
+  external: ['node-pty', 'better-sqlite3'],
   // Mirror electron.vite.config.ts defines. Empty POSTHOG_KEY = telemetry off
   // (forks ship with no key and send nothing). __MD_SHELL_FENCE__ is
   // deliberately NOT defined — it must stay a literal (same as upstream).

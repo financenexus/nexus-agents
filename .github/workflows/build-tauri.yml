@@ -1,0 +1,74 @@
+# Nexus Agents — cloud build (Tauri, Windows x64). No local toolchain needed.
+# Builds: renderer bundle + sidecar bundle + native prebuilds + Tauri installer.
+name: nexus-agents tauri build (windows)
+
+on:
+  push:
+    branches: [nexus/tauri-base]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Allow git deps over https (no SSH on CI)
+        run: git config --global url."https://github.com/".insteadOf "git+ssh://git@github.com/"
+
+      - name: Install JS deps (no scripts — native via prebuilds)
+        run: npm ci --ignore-scripts
+
+      - name: Build renderer (out/renderer)
+        run: npm run build
+
+      - name: Bundle Node sidecar
+        run: node src/nexus-sidecar/build.cjs
+
+      - name: Fetch better-sqlite3 prebuild (node-v127, win-x64)
+        working-directory: node_modules/better-sqlite3
+        run: node ../prebuild-install/bin.js
+
+      - name: Bundle web bridge + inject into renderer
+        run: node src/nexus-web/build-web.cjs
+        env:
+          NEXUS_RENDERER_OUT: out/renderer
+
+      - name: Stage node runtime for sidecar
+        shell: pwsh
+        run: |
+          Invoke-WebRequest -Uri "https://nodejs.org/dist/v22.23.3/node-v22.23.3-win-x64.zip" -OutFile "$env:RUNNER_TEMP\node.zip"
+          Expand-Archive "$env:RUNNER_TEMP\node.zip" "$env:RUNNER_TEMP\nodeunzip"
+          New-Item -ItemType Directory src-tauri/sidecar -Force
+          Copy-Item "$env:RUNNER_TEMP\nodeunzip\node-v22.23.3-win-x64\node.exe" src-tauri/sidecar/node.exe
+
+      - name: Stage sidecar payload
+        shell: pwsh
+        run: |
+          Copy-Item dist-sidecar/sidecar.cjs src-tauri/sidecar/sidecar.cjs
+          New-Item -ItemType Directory src-tauri/sidecar/node_modules -Force
+          foreach ($m in @('node-pty','better-sqlite3','bindings','file-uri-to-path','node-addon-api')) {
+            if (Test-Path "node_modules/$m") {
+              Copy-Item "node_modules/$m" "src-tauri/sidecar/node_modules/$m" -Recurse -Force
+            }
+          }
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri -> target
+
+      - name: Tauri build (nsis + msi)
+        run: npx --yes "@tauri-apps/cli@^2" build
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nexus-agents-windows
+          path: |
+            src-tauri/target/release/bundle/nsis/*.exe
+            src-tauri/target/release/bundle/msi/*.msi

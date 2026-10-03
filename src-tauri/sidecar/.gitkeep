@@ -1,0 +1,3 @@
+CI stages the real sidecar payload (node runtime + sidecar.cjs + node_modules)
+into this directory before `tauri build`. This placeholder keeps the
+`sidecar/*` resource glob valid on fresh clones.

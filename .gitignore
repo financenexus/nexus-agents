@@ -2,8 +2,11 @@ node_modules/
 node_modules
 out/
 dist/
-# Nexus Agents (Tauri) build outputs — never commit
+# Nexus Agents (Tauri) build outputs — never commit (except sidecar/.gitkeep so the
+# bundle resource glob always matches; CI stages the real payload on top)
 src-tauri/target/
+src-tauri/sidecar/*
+!src-tauri/sidecar/.gitkeep
 dist-sidecar/
 dist-web/
 NEXUS-SESSION.md
